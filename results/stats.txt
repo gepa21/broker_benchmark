@@ -1,0 +1,27 @@
+rabbitmq : 
+  broker :
+    mem: 100mb
+    cpu: 40%
+  client :
+    mem: 2gb
+    cpu: 20%
+
+
+kaleidoscope : 
+  broker :
+    mem: ??mb
+    cpu: ??%
+  client :
+    mem: ??gb
+    cpu: ??%
+
+
+kaleidoscope p2p : 
+  broker :
+    mem: ??mb
+    cpu: ??%
+  client :
+    mem: ??gb
+    cpu: ??%
+
+  

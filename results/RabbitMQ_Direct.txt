@@ -1,0 +1,46 @@
+Available brokers to test.
+   0 - Kaleidoscope
+   1 - RabbitMQ
+Select broker : 1
+
+Initializing Tester_RabbitMQ...
+Connecting Client 1...
+Connecting Client 2...
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 62.78sec , throughput: 63.71K msg/sec ,  latency: 9ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 62.59sec , throughput: 63.91K msg/sec ,  latency: 130ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 63.09sec , throughput: 63.40K msg/sec ,  latency: 71ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 64.06sec , throughput: 62.44K msg/sec ,  latency: 97ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 62.56sec , throughput: 63.93K msg/sec ,  latency: 137ms

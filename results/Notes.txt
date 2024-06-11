@@ -1,0 +1,2 @@
+chart all : https://quickchart.io/chart?width=600&format=png&c={type:%27bar%27,data:{labels:[%22RabbitMQ%20(Topic)%22,%22RabbitMQ%20(Direct)%22,%22Kaleidoscope%20(Normal)%22,%22Kaleidoscope%20(P2P)%22,],datasets:[{label:%27messages/second%20(higher%20is%20better)%27,data:[41000,63000,110000,712000]}]}}
+

@@ -1,0 +1,54 @@
+Available brokers to test.
+   0 - Kaleidoscope
+   1 - RabbitMQ
+Select broker : 0
+
+P2P modes for Kaleidoscope.
+   0 - Disabled
+   1 - Enabled
+Select p2p mode : 0
+
+Initializing Tester_Kaleidoscope...
+Connecting Client 1...
+*** client 1 connection opened
+Connecting Client 2...
+*** client 2 connection opened
+Warming up
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 36.08sec , throughput: 110.87K msg/sec ,  latency: 2ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 35.70sec , throughput: 112.04K msg/sec ,  latency: 0ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 35.81sec , throughput: 111.71K msg/sec ,  latency: 0ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 35.90sec , throughput: 111.43K msg/sec ,  latency: 0ms
+
+
+
+Press any key to start test...
+
+Starting test...
+
+RunTest_MessageFlooding (concurrency:40) -> duration: 35.97sec , throughput: 111.21K msg/sec ,  latency: 0ms

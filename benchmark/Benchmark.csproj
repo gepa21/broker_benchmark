@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageReference Include="Phoesion.Glow.SDK.Firefly.SrvHost" Version="2.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Phoesion.Glow.API.Internal">
+      <HintPath>..\glow_binaries\Phoesion.Glow.API.Internal.dll</HintPath>
+    </Reference>
+    <Reference Include="Phoesion.Glow.Base.MsgPack">
+      <HintPath>..\glow_binaries\Phoesion.Glow.Base.MsgPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Phoesion.Glow.Kaleidoscope.Client">
+      <HintPath>..\glow_binaries\Phoesion.Glow.Kaleidoscope.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Phoesion.VFSharp">
+      <HintPath>..\glow_binaries\Phoesion.VFSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\certs\client.crt" Link="client.crt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
