@@ -8,21 +8,19 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Kaleidoscope.Benchmark.Testers
+namespace Benchmark.Testers
 {
     static class Tester_RabbitMQ
     {
         static ConnectionFactory connectionFactory;
-        static IModel producerChannel;
-        static IModel consumerChannel;
+        static IModel[] producerChannels;
+        static IModel[] consumerChannels;
 
         const string exchName = "fiber.firefly.testexchange";
         const string queueName = "fiber.firefly.testexchange => testqueue";
         const string routingKey = "test_binding";
 
-        const bool useSsl = false;
-
-        public static async Task InitTestbed(string brokerIP, string exchangeType)
+        public static async Task InitTestbed(string brokerIP, string exchangeType, bool encryption, int consumerCount, int producerCount)
         {
             Console.WriteLine($"Initializing {nameof(Tester_RabbitMQ)}...");
 
@@ -36,7 +34,7 @@ namespace Kaleidoscope.Benchmark.Testers
                 RequestedHeartbeat = TimeSpan.FromSeconds(40),
                 Ssl = new SslOption
                 {
-                    Enabled = useSsl,
+                    Enabled = encryption,
                     Version = System.Security.Authentication.SslProtocols.Tls12,
                     CertPath = "client.crt",
                     CertificateValidationCallback = (_, _, _, _) => true,
@@ -44,37 +42,59 @@ namespace Kaleidoscope.Benchmark.Testers
                 },
                 UserName = "test",
                 Password = "test",
-                Port = useSsl ? 5671 : 5672
+                Port = encryption ? 5671 : 5672
             };
 
-            //create client
-            var client1 = connectionFactory.CreateConnection();
-            var client2 = connectionFactory.CreateConnection();
+            //producer client
+            producerChannels = new IModel[producerCount];
+            if (Program.TestComponentMode.HasFlag(TestComponentModes.Producer))
+                for (int n = 0; n < producerCount; n++)
+                {
+                    //create client
+                    var producerClient = connectionFactory.CreateConnection();
 
-            //connect client 1
-            Console.WriteLine("Connecting Client 1...");
-            while (!client1.IsOpen) await Task.Delay(100);
+                    //connect client
+                    Console.WriteLine("Connecting producer client...");
+                    while (!producerClient.IsOpen) await Task.Delay(100);
 
-            //connect client 2 
-            Console.WriteLine("Connecting Client 2...");
-            while (!client2.IsOpen) await Task.Delay(100);
+                    //get channel
+                    var producerChannel = producerClient.CreateModel();
+                    producerChannels[n] = producerChannel;
 
-            //get channels
-            producerChannel = client1.CreateModel();
-            consumerChannel = client2.CreateModel();
+                    //setup exchange
+                    producerChannel.ExchangeDeclare(exchName, exchangeType, durable: false, autoDelete: true);
 
-            //bind queue/exchange using routing key
-            producerChannel.ExchangeDeclare(exchName, exchangeType, durable: false, autoDelete: true);
-            consumerChannel.QueueDeclare(queueName, false, false, true, null);
-            consumerChannel.QueueBind(queueName, exchName, routingKey);
+                    //warmup
+                    for (int i = 0; i < 100; i++)
+                        producerChannel.BasicPublish(exchName, routingKey, body: Program.DataMsg);
+                }
 
-            //create queue for consumer
-            var consumerQueue = new CustomBasicConsumer(consumerChannel);
-            consumerChannel.BasicConsume(queueName, true, consumerQueue);
-            consumerChannel.BasicQos(0, 0, false);
+            //setup consumer queue
+            consumerChannels = new IModel[consumerCount];
+            if (Program.TestComponentMode.HasFlag(TestComponentModes.Consumer))
+                for (int n = 0; n < consumerCount; n++)
+                {
+                    //create client
+                    var consumerClient = connectionFactory.CreateConnection();
 
-            //warmup
-            producerChannel.BasicPublish(exchName, routingKey, body: Program.DataMsg);
+                    //connect client
+                    Console.WriteLine("Connecting consumer client...");
+                    while (!consumerClient.IsOpen) await Task.Delay(100);
+
+                    //get channel
+                    var consumerChannel = consumerClient.CreateModel();
+                    consumerChannels[n] = consumerChannel;
+
+                    //bind queue/exchange using routing key
+                    consumerChannel.ExchangeDeclare(exchName, exchangeType, durable: false, autoDelete: true);
+                    consumerChannel.QueueDeclare(queueName, false, false, true, null);
+                    consumerChannel.QueueBind(queueName, exchName, routingKey);
+
+                    //create queue for consumer
+                    var consumerQueue = new CustomBasicConsumer(consumerChannel);
+                    consumerChannel.BasicConsume(queueName, true, consumerQueue);
+                    consumerChannel.BasicQos(0, 0, false);
+                }
         }
 
         sealed class CustomBasicConsumer : DefaultBasicConsumer
@@ -89,18 +109,15 @@ namespace Kaleidoscope.Benchmark.Testers
 
             public override void HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, ReadOnlyMemory<byte> body)
             {
-                //count!
-                var cnt = Interlocked.Increment(ref Program.MsgsReceived);
-
-                //keep timestamps
-                if (cnt == 1)
-                    Program.FirstReceiveTimestamp = DateTime.UtcNow.Ticks;
+                //handle
+                Program.RxHandler();
             }
         }
 
 
-        public static async Task RunTest_MessageFlooding(int msgToSend)
+        public static async Task RunTest_MessageFlooding(int channel, int msgToSend)
         {
+            var producerChannel = producerChannels[channel];
             for (int n = 0; n < msgToSend; n++)
                 producerChannel.BasicPublish(exchName, routingKey, body: Program.DataMsg);
         }

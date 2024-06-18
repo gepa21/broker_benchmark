@@ -1,0 +1,36 @@
+Component modes.
+   0 - Both (Producer & Consumer)
+   1 - Producer
+   2 - Consumer
+Select mode: 2
+
+Available brokers to test.
+   0 - Kaleidoscope
+   1 - RabbitMQ
+Select broker: 1
+
+Exchange types.
+   0 - Topic
+   1 - Direct
+Select exchange type: 1
+
+Initializing Tester_RabbitMQ...
+Connecting consumer client...
+
+Waiting for producer warmup.
+Press any key to start test...
+Starting test.
+
+
+consumer reset and waiting...
+RunTest_MessageFlooding (concurrency:60) -> duration: 100.43sec , throughput: 29.87K msg/sec ,  latency: 0ms
+
+
+
+consumer reset and waiting...
+RunTest_MessageFlooding (concurrency:60) -> duration: 99.54sec , throughput: 30.14K msg/sec ,  latency: 0ms
+
+
+
+consumer reset and waiting...
+RunTest_MessageFlooding (concurrency:60) -> duration: 98.03sec , throughput: 30.60K msg/sec ,  latency: 0ms
